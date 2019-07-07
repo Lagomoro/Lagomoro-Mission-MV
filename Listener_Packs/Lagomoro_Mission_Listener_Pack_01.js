@@ -42,6 +42,13 @@
  * @desc 击杀敌人[敌人id]
  * @default true
  * 
+ * @param 监听移动
+ * @type boolean
+ * @off 关闭
+ * @on 开启
+ * @desc 移动
+ * @default true
+ * 
  * @help 
  * ======================================================================
  * Lagomoro新版任务系统 功能最强大的任务系统！
@@ -67,6 +74,7 @@ Lagomoro.Mission.Listener.GAIN_ITEM   = Boolean(Lagomoro.Mission.Listener.Parame
 Lagomoro.Mission.Listener.GAIN_WEAPON = Boolean(Lagomoro.Mission.Listener.Parameters_Pack_01['监听获得武器'] || true);
 Lagomoro.Mission.Listener.GAIN_ARMOR  = Boolean(Lagomoro.Mission.Listener.Parameters_Pack_01['监听获得防具'] || true);
 Lagomoro.Mission.Listener.KILL_ENEMY  = Boolean(Lagomoro.Mission.Listener.Parameters_Pack_01['监听击杀敌人'] || true);
+Lagomoro.Mission.Listener.MOVEMENT    = Boolean(Lagomoro.Mission.Listener.Parameters_Pack_01['监听移动'] || true);
 // ======================================================================
 
 // ======================================================================
@@ -121,5 +129,16 @@ Game_Enemy.prototype.die = function() {
     this.Lagomoro_Mission_Listener_KILL_ENEMY_die();
     if(Lagomoro.Mission.Listener.KILL_ENEMY){
         $gameSystem.appendListener("击杀敌人[" + this._enemyId + "]", 1);
+    }
+};
+
+// ======================================================================
+// * 监听移动
+// ----------------------------------------------------------------------
+Game_Party.prototype.Lagomoro_Mission_Listener_MOVEMENT_increaseSteps = Game_Party.prototype.increaseSteps;
+Game_Party.prototype.increaseSteps = function() {
+    this.Lagomoro_Mission_Listener_MOVEMENT_increaseSteps();
+    if(Lagomoro.Mission.Listener.MOVEMENT){
+        $gameSystem.appendListener("移动", 1);
     }
 };
