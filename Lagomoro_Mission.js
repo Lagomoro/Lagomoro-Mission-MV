@@ -2,7 +2,7 @@
  * ======================================================================
  * 插件描述
  * ----------------------------------------------------------------------
- * @plugindesc Lagomoro任务系统 V14.0.2 正式版
+ * @plugindesc Lagomoro任务系统 V14.0.3 正式版
  * @author Lagomoro
  * ======================================================================
  * 插件参数
@@ -589,11 +589,11 @@ Game_System.prototype.missionIsVariable = function(dataClass){
 };
 Game_System.prototype.missionVariable = function(dataClass){
     var data = this.missionExist(dataClass) ? Lagomoro_Xlsx.getData(dataClass) : null;
-    return data ? (this.missionIsVariable(dataClass) ? this.missionEvalParse(this.missionData(dataClass).variable, data.variable) : this.missionData(dataClass).variable) : 0;
+    return data ? (this.missionIsVariable(dataClass) ? this.missionData(dataClass).variable : this.missionEvalParse(this.missionData(dataClass).variable, data.variable)) : 0;
 };
 Game_System.prototype.missionStandard = function(dataClass){
     var data = Lagomoro_Xlsx.getData(dataClass);
-    return data ? (parseInt(data.standard).toString() === data.standard ? this.missionEvalParse(this.missionData(dataClass).variable, data.standard) : data.standard) : 1;
+    return data ? (parseInt(data.standard).toString() === data.standard ? data.standard : this.missionEvalParse(this.missionData(dataClass).variable, data.standard)) : 1;
 };
 Game_System.prototype.isMissionHide = function(dataClass){
     if(this.missionExist(dataClass) && (dataClass.split('.').length === 2 || dataClass.split('.').length === 3)){
