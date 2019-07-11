@@ -2,7 +2,7 @@
  * ======================================================================
  * 插件描述
  * ----------------------------------------------------------------------
- * @plugindesc Lagomoro任务系统 V14.0.1 正式版
+ * @plugindesc Lagomoro任务系统 V14.0.2 正式版
  * @author Lagomoro
  * ======================================================================
  * 插件参数
@@ -927,7 +927,7 @@ Game_System.prototype.mission_iscompleted = function(dataClass){
 Game_System.prototype.mission_isdone = function(dataClass){
     var temp = this.isMissionCompleted(dataClass) || this.isMissionComplete(dataClass);
     if(temp) this.missionComplete(dataClass);
-    return this.isMissionUpfrontCompleted(dataClass);
+    return temp;
 };
 //检测任务的前置任务是否全部达成
 Game_System.prototype.mission_isfrontComplete = function(dataClass){
