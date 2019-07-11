@@ -2,7 +2,7 @@
  * ======================================================================
  * 插件描述
  * ----------------------------------------------------------------------
- * @plugindesc Lagomoro任务系统 V14.0.3 正式版
+ * @plugindesc Lagomoro任务系统 V14.0.4 正式版
  * @author Lagomoro
  * ======================================================================
  * 插件参数
@@ -512,7 +512,7 @@ Game_System.prototype.registerMission = function(dataClass) {
             for(var i = 0;i < readData.childs.length;i++){
                 this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id] = {
                     "hide" : readData.childs[i].hidden,
-                    "variable" : (parseInt(readData.childs[i].variable).toString() === readData.childs[i].variable ? readData.childs[i].variable : 0),
+                    "variable" : (parseFloat(readData.childs[i].variable).toString() !== "NaN" ? readData.childs[i].variable : 0),
                     "completed" : false
                 }
             }
@@ -521,7 +521,7 @@ Game_System.prototype.registerMission = function(dataClass) {
                 if(!this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id]){
                     this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id] = {
                         "hide" : readData.childs[i].hidden,
-                        "variable" : (parseInt(readData.childs[i].variable).toString() === readData.childs[i].variable ? readData.childs[i].variable : 0),
+                        "variable" : (parseFloat(readData.childs[i].variable).toString() !== "NaN" ? readData.childs[i].variable : 0),
                         "completed" : false
                     }
                 }
@@ -540,7 +540,7 @@ Game_System.prototype.resetMission = function(dataClass) {
             for(var i = 0;i < readData.childs.length;i++){
                 if(this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id]){
                     this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id]["hide"] = readData.childs[i].hidden;
-                    this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id]["variable"] = (parseInt(readData.childs[i].variable).toString() === readData.childs[i].variable ? readData.childs[i].variable : 0);
+                    this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id]["variable"] = (parseFloat(readData.childs[i].variable).toString() !== "NaN" ? readData.childs[i].variable : 0);
                     this._Lagomoro_Mission_Data[data[0]][data[1]][readData.childs[i].id]["completed"] = false;
                 }
             }
@@ -585,7 +585,7 @@ Game_System.prototype.missionData = function(dataClass){
 Game_System.prototype.missionIsVariable = function(dataClass){
     if(dataClass.split('.').length !== 3) return false;
     var data = this.missionExist(dataClass) ? Lagomoro_Xlsx.getData(dataClass) : null;
-    return data ? (parseInt(data.variable).toString() === data.variable ? true : false) : false;
+    return data ? (parseFloat(data.variable).toString() !== "NaN" ? true : false) : false;
 };
 Game_System.prototype.missionVariable = function(dataClass){
     var data = this.missionExist(dataClass) ? Lagomoro_Xlsx.getData(dataClass) : null;
@@ -593,7 +593,7 @@ Game_System.prototype.missionVariable = function(dataClass){
 };
 Game_System.prototype.missionStandard = function(dataClass){
     var data = Lagomoro_Xlsx.getData(dataClass);
-    return data ? (parseInt(data.standard).toString() === data.standard ? data.standard : this.missionEvalParse(this.missionData(dataClass).variable, data.standard)) : 1;
+    return data ? (parseFloat(data.standard).toString() !== "NaN" ? data.standard : this.missionEvalParse(this.missionData(dataClass).variable, data.standard)) : 1;
 };
 Game_System.prototype.isMissionHide = function(dataClass){
     if(this.missionExist(dataClass) && (dataClass.split('.').length === 2 || dataClass.split('.').length === 3)){
@@ -852,7 +852,7 @@ Game_System.prototype.appendListener = function(formula, count) {
         listener = Lagomoro_Xlsx._listener[i];
         status = this.getmissionStatus(listener.id);
         if((status === 3 || status === 4) && formula === listener.formula){
-            this.mission_addrate(listener.id, (parseInt(listener.value).toString() === listener.value ? this.missionEvalParse(this.missionData(listener.id).variable, listener.value) : listener.value) * count);
+            this.mission_addrate(listener.id, (parseFloat(listener.value).toString() !== "NaN" ? this.missionEvalParse(this.missionData(listener.id).variable, listener.value) : listener.value) * count);
         }
     }
 }
