@@ -2,7 +2,7 @@
  * ======================================================================
  * 插件描述
  * ----------------------------------------------------------------------
- * @plugindesc Lagomoro任务系统 V14.0.4 正式版
+ * @plugindesc Lagomoro任务系统 V14.1.0 正式版
  * @author Lagomoro
  * ======================================================================
  * 插件参数
@@ -195,6 +195,7 @@ var Lagomoro = Lagomoro || {};
 Lagomoro.Mission = Lagomoro.Mission || {};
 Lagomoro.Mission.Parameters = PluginManager.parameters('Lagomoro_Mission');
 // ----------------------------------------------------------------------
+Lagomoro.Mission.JSON               = "data/Mission.json";
 Lagomoro.Mission.PATH               = String(Lagomoro.Mission.Parameters['数据库存储路径']        || 'data/Lagomoro_Mission.xlsx');
 Lagomoro.Mission.CANTOAST           = Boolean(Lagomoro.Mission.Parameters['是否推送任务信息']     || true);
 Lagomoro.Mission.TOAST              = Lagomoro.Mission.TOAST                                     || {};
@@ -232,15 +233,24 @@ Lagomoro_Xlsx.isLocalMode = function(){
     return StorageManager.isLocalMode();
 };
 Lagomoro_Xlsx.load = function(){
+    var path = require('path');
+    var fs = require('fs');
+    var base = path.join(path.dirname(process.mainModule.filename), Lagomoro.Mission.JSON);
+    var base2 = path.join(path.dirname(process.mainModule.filename), Lagomoro.Mission.PATH);
+    if(fs.existsSync(base) && !fs.existsSync(base2)){
+        this.loadExecuteJson();
+        return;
+    }
     var filetype = Lagomoro.Mission.PATH.split('.').pop();
     if(filetype === 'xlsx'||filetype === 'xls'||filetype === 'xlsm'||filetype === 'xlsb'){
         if(this.isLocalMode()){
             this.loadLocalXlsx();
+            this.saveExecuteJson();
         }else{
             this.loadWebXlsx();
         }
     }else if(filetype === 'json'){
-        this.loadJson(base);
+        this.loadJson();
     }
 };
 Lagomoro_Xlsx.loadLocalXlsx = function(){
@@ -282,15 +292,52 @@ Lagomoro_Xlsx.loadWebXlsx = function(){
     };
     xhr.send();
 };
+Lagomoro_Xlsx.loadExecuteJson = function(){
+    var path = require('path');
+    var filePath = path.join(path.dirname(process.mainModule.filename), Lagomoro.Mission.JSON);
+    var fs = require('fs');
+    if (fs.existsSync(filePath)) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', Lagomoro.Mission.JSON);
+        xhr.overrideMimeType('application/json');
+        xhr.onload = function() {
+            if (xhr.status < 400) {
+                var data = JSON.parse(LZString.decompressFromBase64(xhr.responseText) || {"category":[],"chapter":[],"listener":[],"data":[]});
+                Lagomoro_Xlsx._category = data.category["@a"];
+                Lagomoro_Xlsx._chapter = data.chapter["@a"];
+                Lagomoro_Xlsx._listener = data.listener["@a"];
+                Lagomoro_Xlsx._data = data.data["@a"];
+            }
+        };
+        xhr.send();
+    }
+};
+Lagomoro_Xlsx.saveExecuteJson = function(){
+    var json = {};
+    json.category = this._category;
+    json.chapter  = this._chapter;
+    json.listener = this._listener;
+    json.data     = this._data;
+    var data = LZString.compressToBase64(JsonEx.stringify(json));
+    var fs = require('fs');
+    var path = require('path');
+    var dirPath = path.join(path.dirname(process.mainModule.filename), "data/");
+    var filePath = path.join(path.dirname(process.mainModule.filename), Lagomoro.Mission.JSON);
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath);
+    }
+    fs.writeFileSync(filePath, data);
+};
 Lagomoro_Xlsx.loadJson = function(){
     var xhr = new XMLHttpRequest();
     xhr.open('GET', Lagomoro.Mission.PATH);
     xhr.overrideMimeType('application/json');
     xhr.onload = function() {
         if (xhr.status < 400) {
-            var data = JSON.parse(xhr.responseText || {"category":[],"chapter":[],"data":[]});
+            var data = JSON.parse(xhr.responseText || {"category":[],"chapter":[],"listener":[],"data":[]});
             Lagomoro_Xlsx._category = data.category;
             Lagomoro_Xlsx._chapter = data.chapter;
+            Lagomoro_Xlsx._listener = data.listener;
             Lagomoro_Xlsx._data = data.data;
         }
     };
