@@ -2,7 +2,7 @@
  * ======================================================================
  * 插件描述
  * ----------------------------------------------------------------------
- * @plugindesc Lagomoro任务系统 V14.1.0 正式版
+ * @plugindesc Lagomoro任务系统 V14.1.2 正式版
  * @author Lagomoro
  * ======================================================================
  * 插件参数
@@ -611,6 +611,7 @@ Game_System.prototype.missionExist = function(dataClass){
     var data = dataClass.split('.');
     if(data.length > 2 && (data[2] === 'hide' || data[2] === 'completed')) return false;
     var temp = this._Lagomoro_Mission_Data;
+    if(temp === null || temp === undefined) return false;
     while(data.length > 0){
         temp = temp[data.shift()];
         if(temp === null || temp === undefined) return false;
@@ -856,7 +857,7 @@ Game_System.prototype.testAllMission = function() {
                 for(var key_c in this._Lagomoro_Mission_Data[key_a][key_b]){
                     if((key_c !== 'hide' && key_c !== 'completed') && !this.isMissionCompleted(key_a+'.'+key_b+'.'+key_c)){
                         pass = false;
-                        return;
+                        break;
                     }
                 }
                 if(pass && !this.isMissionHide(key_a+'.'+key_b+'.'+key_c) && this.isMissionUpfrontCompleted(key_a+'.'+key_b+'.'+key_c)){
