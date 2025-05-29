@@ -1532,6 +1532,12 @@ Lagomoro_Mission_Window_Content.prototype.clearItem = function() {
     this._page = [0,0];
 	this.refresh();
 };
+Lagomoro_Mission_Window_Content.prototype.processNewLine = function(textState) {
+    textState.x = textState.left;
+    textState.y += textState.height;
+    textState.height = this.calcTextHeight(textState, false);
+    textState.index++;
+};
 Lagomoro_Mission_Window_Content.prototype.processNormalCharacter = function(textState) {
     var c = textState.text[textState.index];
     var w = this.textWidth(c);
